@@ -155,9 +155,9 @@ Here are some example commands you can use in the Meterpreter shell:
 - `hashdump`: Retrieve hashes of all users on the target.
 - `background`: Move the current session to the background.
 - `help`: Display a list of available commands and their descriptions.
-
+## 
 ## Example stay in target system after rebooting
 
-
+exploit/windows/local/persistence_service
 
 Feel free to explore and experiment with additional Meterpreter commands for a comprehensive assessment. Happy hacking!
